@@ -1,0 +1,29 @@
+{% extends "headerFooterTemplate.html" %}
+{% block content %}
+<div class="uk-card uk-card-body">
+  <h3 class="uk-card-title"> hello there</h3>
+</div>
+
+
+{% endblock %}
+
+{% block script %}
+<script src="https://code.jquery.com/jquery-2.1.1.min.js" type=
+   "text/javascript">
+</script>
+<script>
+  $(function() {
+      $('a').click(function(e) {
+      var url = $("#url").val();
+      var content = $("#content").val();
+      var username = $("#username").val();
+      var avatar_url = $("#avatar_url").val();
+      $.post(url,
+  {"content": content, "username": username, "avatar_url": avatar_url},
+      function(){
+          Materialize.toast('Message Sent!', 4000)
+      });
+      });
+  });
+  </script>
+{% endblock %}
