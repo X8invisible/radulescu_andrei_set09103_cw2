@@ -1,4 +1,5 @@
 from flask import Flask, redirect , url_for, render_template, abort, request, session, flash
+from functools import wraps
 import bcrypt
 import sqlite3
 import ConfigParser
@@ -18,7 +19,16 @@ def init(app):
         app.config['SECRET_KEY'] = config.get("config", "SECRET_KEY")
     except:
         print "Could not read config from: ", config_location
-
+def requires_login(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        status = session.has_key('name')
+        if not status:
+            logged = False
+            name = "Account"
+            return redirect('/')
+        return f(*args, **kwargs)
+    return decorated
 @app.route('/')
 def root():
     try:
@@ -64,8 +74,28 @@ def log():
                 pass
         return render_template('signup.html', logged = logged, name = name, title = "Log In")
 @app.route('/profile/')
-def dashboard():
-    return render_template('profile.html', logged = False, name = "Account", title = "Dashboard")
+@app.route('/profile/<name>/')
+@requires_login
+def dashboard(name = None):
+    if name == None:
+        name = session['name']
+        return render_template('profile.html', logged = True, name = name, title = "Dashboard")
+    else:
+        if dbManager.checkUserExists(name) and name == session['name']:
+            return render_template('profile.html', logged = True, name = name, title = "Dashboard")
+        else:
+            abort(403)
+@app.route('/webhook/add', methods=['POST', 'GET'])
+@requires_login
+def webh_add():
+    if request.method=='POST':
+        name = request.form['name']
+        avatar = request.form['avatar']
+        url = request.form['url']
+        owner = dbManager.getUserId(session['name'])
+        dbManager.addWebHook(name,avatar,url,owner)
+        return redirect('/')
+    return render_template('submitWebh.html', logged = True, name = session['name'], title = "New Webhook")
 @app.route('/logout')
 def logout():
     session.pop('name', None)
