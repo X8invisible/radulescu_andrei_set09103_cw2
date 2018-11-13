@@ -1,0 +1,72 @@
+{% extends "headerFooterTemplate.html" %}
+{% block content %}
+{% with messages = get_flashed_messages () %}
+{% if messages %}
+{% for message in messages %}
+  <div class="alert alert-warning alert-dismissible fade show" role="alert">
+    {{ message | safe }} <a href="/login" class="alert-link">Click here to log in.</a>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+{% endfor %}
+{% endif %}
+{% endwith %}
+
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="#" crossorigin="anonymous">
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-3 ">
+		     <div class="list-group ">
+              <a href="#" class="list-group-item list-group-item-action active">Dashboard</a>
+              <a href="#" class="list-group-item list-group-item-action">User Management</a>
+          </div>
+		</div>
+		<div class="col-md-9">
+		    <div class="card">
+		        <div class="card-body">
+		            <div class="row">
+		                <div class="col-md-4 border-right">
+		                    <h4>Webhooks</h4>
+		                </div>
+		                <div class="col-md-6">
+		                    <button type="button" class="btn btn-sm btn-primary">Add Webhook</button>
+		                </div>
+		            </div>
+		            <div class="row">
+		                <div class="col-md-12">
+		                    <table class="table table-hover ">
+                                <thead class="bg-light ">
+                                  <tr>
+                                    <th>Username</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Posts</th>
+                                    <th>Edit</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <tr>
+                                    <td><a href="#"><small>Johnyahua</small></a></td>
+                                    <td><small>Doe</small></td>
+                                    <td><small>john@example.com</small></td>
+                                    <td><small>Admin</small></td>
+                                    <td><a href="#"><small>5</small></a></td>
+                                    <td>
+                                        <a href="#"><i class="fa fa-pencil-square-o"></i></a>
+                                        <a href="#"><i class="fa fa-eye"></i></a>
+                                        <a href="#"><i class="fa fa-trash"></i></a>
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+		                </div>
+		            </div>
+		        </div>
+		    </div>
+		</div>
+	</div>
+</div>
+{% endblock %}
