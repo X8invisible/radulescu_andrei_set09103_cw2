@@ -56,16 +56,29 @@ def addWebHook(name,avatar,url,owner):
     cur.execute("INSERT INTO webhook (name,avatar,url,owner) VALUES (?,?,?,?)", (name,avatar,url,owner))
     conn.commit()
     conn.close()
-def getWebhooks(userid):
+def getWebhookList(userid):
     conn = sql.connect(dbLocation)
     cur = conn.cursor()
-    cur.execute("SELECT name, service, avatar, url, id FROM webhook WHERE owner = ?",(userid,))
+    cur.execute("SELECT name, service, avatar, url, id FROM webhook WHERE owner = ?",(int(userid),))
     webhooks = cur.fetchall()
     conn.close()
     return webhooks
+def getWebhook(webhId):
+    conn = sql.connect(dbLocation)
+    cur = conn.cursor()
+    cur.execute("SELECT name, service, avatar, url, id, owner FROM webhook WHERE id = ?",(int(webhId),))
+    webhook = cur.fetchall()
+    conn.close()
+    return webhook
 def deleteWebhook(id):
     conn = sql.connect(dbLocation)
     cur = conn.cursor()
     cur.execute("DELETE FROM webhook WHERE id = ?",(id,))
+    conn.commit()
+    conn.close()
+def editWebhook(id,name,avatar,url):
+    conn = sql.connect(dbLocation)
+    cur = conn.cursor()
+    cur.execute("UPDATE webhook SET name = ?, avatar = ?, url = ? WHERE id = ?",(name,avatar,url,id))
     conn.commit()
     conn.close()

@@ -79,18 +79,25 @@ def log():
 def dashboard(name = None):
     if request.method=='POST':
         id = request.form.get('delete')
-        print id
+        dbManager.deleteWebhook(id)
+        return redirect('/profile/')
     else:
         if name == None:
             name = session['name']
-            userWebh = dbManager.getWebhooks(dbManager.getUserId(name))
+            userWebh = dbManager.getWebhookList(dbManager.getUserId(name))
             return render_template('profile.html', logged = True, name = name, title = "Dashboard", webhooks = userWebh)
         else:
             if dbManager.checkUserExists(name) and name == session['name']:
-                userWebh = dbManager.getWebhooks(dbManager.getUserId(name))
+                userWebh = dbManager.getWebhookList(dbManager.getUserId(name))
                 return render_template('profile.html', logged = True, name = name, title = "Dashboard", webhooks = userWebh)
             else:
                 abort(403)
+@app.route('/profile/edit', methods=['POST', 'GET'])
+@requires_login
+def edit_user():
+    if request.method=='POST':
+        pass
+    return render_template('profile.html', logged = True, name = name, title = "User Management", webhooks = userWebh)
 @app.route('/webhook/add', methods=['POST', 'GET'])
 @requires_login
 def webh_add():
@@ -99,9 +106,31 @@ def webh_add():
         avatar = request.form['avatar']
         url = request.form['url']
         owner = dbManager.getUserId(session['name'])
-        dbManager.addWebHook(name,avatar,url,owner)
-        return redirect('/')
-    return render_template('submitWebh.html', logged = True, name = session['name'], title = "New Webhook")
+        dbManager.editWebHook(name,avatar,url,owner)
+        return redirect('/profile/')
+    return render_template('submitWebh.html', logged = True, name = session['name'], title = "New Webhook", webh = None)
+@app.route('/webhook/edit/<webhId>', methods=['POST', 'GET'])
+@requires_login
+def webh_edit(webhId = None):
+    if request.method == 'POST':
+        name = request.form['name']
+        avatar = request.form['avatar']
+        url = request.form['url']
+        dbManager.editWebhook(int(webhId),name,avatar,url)
+        return redirect('/profile/')
+    else:
+        if webhId == None:
+            return redirect('/profile/')
+        else:
+            webh = dbManager.getWebhook(webhId)
+            if webh == None:
+                abort(404)
+            else:
+                print webh[0][5]
+                if webh[0][5] != dbManager.getUserId(session['name']):
+                    abort(403)
+                else:
+                    return render_template('submitWebh.html', logged = True, name = session['name'], title = "Edit Webhook", webh = webh)
 @app.route('/logout')
 def logout():
     session.pop('name', None)
