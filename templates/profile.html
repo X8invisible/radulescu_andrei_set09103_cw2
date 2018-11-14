@@ -13,7 +13,7 @@
 {% endif %}
 {% endwith %}
 
-<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="#" crossorigin="anonymous">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
 
 <div class="container-fluid">
 	<div class="row">
@@ -45,15 +45,19 @@
                                   </tr>
                                 </thead>
                                 <tbody>
-                                  <tr>
-                                    <td><a href="#"><small>Boi</small></a></td>
-                                    <td><small>Discord</small></td>
-                                    <td>
-                                        <a href="#"><i class="fa fa-pencil-square-o"></i></a>
-                                        <a href="#"><i class="fa fa-eye"></i></a>
-                                        <a href="#"><i class="fa fa-trash"></i></a>
-                                    </td>
-                                  </tr>
+                                  {% for webh in webhooks %}
+                                    <tr>
+                                      <td><a href="#">{{webh[0]}}</a></td>
+                                      <td>{{webh[1]}}</td>
+                                      <td>
+                                        <form method="post" name="form" id="submitForm">
+                                          <button class="btn btn-link btn-sm" id="edit"><i class="far fa-edit"></i></button>
+                                          <button class="btn btn-link btn-sm" id="delete" value= "{{webh[4]}}"><i class="far fa-trash-alt"></i></button>
+                                        </form>
+                                      </td>
+                                    </tr>
+                                  {% endfor %}
+
                                 </tbody>
                               </table>
 		                </div>

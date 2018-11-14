@@ -73,18 +73,24 @@ def log():
                 name = "Account"
                 pass
         return render_template('signup.html', logged = logged, name = name, title = "Log In")
-@app.route('/profile/')
-@app.route('/profile/<name>/')
+@app.route('/profile/', methods=['POST', 'GET'])
+@app.route('/profile/<name>/', methods=['POST', 'GET'])
 @requires_login
 def dashboard(name = None):
-    if name == None:
-        name = session['name']
-        return render_template('profile.html', logged = True, name = name, title = "Dashboard")
+    if request.method=='POST':
+        id = request.form.get('delete')
+        print id
     else:
-        if dbManager.checkUserExists(name) and name == session['name']:
-            return render_template('profile.html', logged = True, name = name, title = "Dashboard")
+        if name == None:
+            name = session['name']
+            userWebh = dbManager.getWebhooks(dbManager.getUserId(name))
+            return render_template('profile.html', logged = True, name = name, title = "Dashboard", webhooks = userWebh)
         else:
-            abort(403)
+            if dbManager.checkUserExists(name) and name == session['name']:
+                userWebh = dbManager.getWebhooks(dbManager.getUserId(name))
+                return render_template('profile.html', logged = True, name = name, title = "Dashboard", webhooks = userWebh)
+            else:
+                abort(403)
 @app.route('/webhook/add', methods=['POST', 'GET'])
 @requires_login
 def webh_add():

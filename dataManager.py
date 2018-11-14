@@ -45,7 +45,6 @@ def getUserId(username):
     cur.execute("SELECT id FROM users WHERE username = ?",(username,))
     id = cur.fetchall()
     conn.close()
-    print(id[0][0])
     return id[0][0]
 
 def checkPassword(input, hashedPw):
@@ -55,5 +54,18 @@ def addWebHook(name,avatar,url,owner):
     conn = sql.connect(dbLocation)
     cur = conn.cursor()
     cur.execute("INSERT INTO webhook (name,avatar,url,owner) VALUES (?,?,?,?)", (name,avatar,url,owner))
+    conn.commit()
+    conn.close()
+def getWebhooks(userid):
+    conn = sql.connect(dbLocation)
+    cur = conn.cursor()
+    cur.execute("SELECT name, service, avatar, url, id FROM webhook WHERE owner = ?",(userid,))
+    webhooks = cur.fetchall()
+    conn.close()
+    return webhooks
+def deleteWebhook(id):
+    conn = sql.connect(dbLocation)
+    cur = conn.cursor()
+    cur.execute("DELETE FROM webhook WHERE id = ?",(id,))
     conn.commit()
     conn.close()
