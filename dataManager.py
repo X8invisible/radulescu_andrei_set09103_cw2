@@ -55,7 +55,7 @@ def editPassword(username, newPassword):
     conn.commit()
     conn.close()
 
-def addWebHook(name,avatar,url,owner):
+def addWebhook(name,avatar,url,owner):
     conn = sql.connect(dbLocation)
     cur = conn.cursor()
     cur.execute("INSERT INTO webhook (name,avatar,url,owner) VALUES (?,?,?,?)", (name,avatar,url,owner))

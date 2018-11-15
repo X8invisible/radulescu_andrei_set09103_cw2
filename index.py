@@ -40,7 +40,14 @@ def root():
             name = "Account"
             pass
     return render_template('index.html', logged = logged, name = name, title = "Home")
-@app.route('/webhook/')
+@app.route('/webhook/<webhId>')
+@requires_login
+def sendWebh(webhId = None):
+    webhooks = dbManager.getWebhookList(int(dbManager.getUserId(session['name'])))
+    for webh in webhooks:
+        if int(webh[4]) == int(webhId):
+            return render_template('webhook.html', logged = True, name = session['name'], title = webh[0], webh = webh)
+    abort(403)
 def webh():
     return render_template('webhook.html')
 @app.route('/signup', methods=['POST', 'GET'])
@@ -113,7 +120,7 @@ def webh_add():
         avatar = request.form['avatar']
         url = request.form['url']
         owner = dbManager.getUserId(session['name'])
-        dbManager.editWebHook(name,avatar,url,owner)
+        dbManager.addWebhook(name,avatar,url,owner)
         return redirect('/profile/')
     return render_template('submitWebh.html', logged = True, name = session['name'], title = "New Webhook", webh = None)
 @app.route('/webhook/edit/<webhId>', methods=['POST', 'GET'])
