@@ -46,9 +46,14 @@ def getUserId(username):
     id = cur.fetchall()
     conn.close()
     return id[0][0]
-
 def checkPassword(input, hashedPw):
     return hashedPw == bcrypt.hashpw(input.encode('utf-8'), hashedPw.encode('utf-8'))
+def editPassword(username, newPassword):
+    conn = sql.connect(dbLocation)
+    cur = conn.cursor()
+    cur.execute("UPDATE users SET password = ? WHERE id = ?",(newPassword,int(getUserId(username))))
+    conn.commit()
+    conn.close()
 
 def addWebHook(name,avatar,url,owner):
     conn = sql.connect(dbLocation)

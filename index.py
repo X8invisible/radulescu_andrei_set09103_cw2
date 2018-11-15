@@ -2,12 +2,12 @@ from flask import Flask, redirect , url_for, render_template, abort, request, se
 from functools import wraps
 import bcrypt
 import sqlite3
-import ConfigParser
+import configparser
 import dataManager as dbManager
 app = Flask(__name__)
 
 def init(app):
-    config = ConfigParser.ConfigParser()
+    config = configparser.ConfigParser()
     try:
         config_location = "etc/defaults.cfg"
         config.read(config_location)
@@ -18,7 +18,7 @@ def init(app):
         app.config['url'] = config.get("config", "url")
         app.config['SECRET_KEY'] = config.get("config", "SECRET_KEY")
     except:
-        print "Could not read config from: ", config_location
+        print ("Could not read config from: ", config_location)
 def requires_login(f):
     @wraps(f)
     def decorated(*args, **kwargs):
@@ -61,7 +61,8 @@ def log():
             session['name'] = username
             return redirect('/')
         else:
-            return('bad boi')
+            flash('Incorrect login')
+            return redirect('/login')
     else:
         try:
             if(session['name']):
@@ -96,8 +97,14 @@ def dashboard(name = None):
 @requires_login
 def edit_user():
     if request.method=='POST':
-        pass
-    return render_template('profile.html', logged = True, name = name, title = "User Management", webhooks = userWebh)
+        passwordNew = request.form['passwordNew']
+        passwordOld = request.form['passwordOld']
+        if not dbManager.checkLogIn(session['name'], passwordOld):
+            flash('Wrong old password!', 'alert-warning')
+        else:
+            password = bcrypt.hashpw(passwordNew.encode('utf-8'), bcrypt.gensalt())
+            flash('Password Saved!', 'alert-success')
+    return render_template('profile.html', logged = True, name = session['name'], title = "User Management")
 @app.route('/webhook/add', methods=['POST', 'GET'])
 @requires_login
 def webh_add():
@@ -126,7 +133,6 @@ def webh_edit(webhId = None):
             if webh == None:
                 abort(404)
             else:
-                print webh[0][5]
                 if webh[0][5] != dbManager.getUserId(session['name']):
                     abort(403)
                 else:

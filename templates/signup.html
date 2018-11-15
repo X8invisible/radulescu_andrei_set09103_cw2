@@ -1,10 +1,10 @@
 {% extends "headerFooterTemplate.html" %}
 {% block content %}
-{% with messages = get_flashed_messages () %}
+{% with messages = get_flashed_messages() %}
 {% if messages %}
 {% for message in messages %}
   <div class="alert alert-warning alert-dismissible fade show" role="alert">
-    {{ message | safe }} <a href="/logout" class="alert-link">Click here to log out.</a>
+    {{ message | safe }}
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
       <span aria-hidden="true">&times;</span>
     </button>
@@ -12,7 +12,7 @@
 {% endfor %}
 {% endif %}
 {% endwith %}
-<div class="card mx-auto" style="width: 18rem;">
+<div class="card mx-auto" style="width: 18em;">
   <div class="card-body">
     <h5 class="card-title text-center">{{title}}</h5>
     <form action"" method="post" name="form" id="submitForm" class="needs-validation" novalidate>
