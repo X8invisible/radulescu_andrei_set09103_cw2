@@ -48,8 +48,6 @@ def sendWebh(webhId = None):
         if int(webh[4]) == int(webhId):
             return render_template('webhook.html', logged = True, name = session['name'], title = webh[0], webh = webh)
     abort(403)
-def webh():
-    return render_template('webhook.html')
 @app.route('/signup', methods=['POST', 'GET'])
 def register():
     if request.method=='POST':
@@ -110,6 +108,7 @@ def edit_user():
             flash('Wrong old password!', 'alert-warning')
         else:
             password = bcrypt.hashpw(passwordNew.encode('utf-8'), bcrypt.gensalt())
+            dbManager.editPassword(session['name'], password)
             flash('Password Saved!', 'alert-success')
     return render_template('profile.html', logged = True, name = session['name'], title = "User Management")
 @app.route('/webhook/add', methods=['POST', 'GET'])
@@ -119,8 +118,9 @@ def webh_add():
         name = request.form['name']
         avatar = request.form['avatar']
         url = request.form['url']
+        service= request.form['service']
         owner = dbManager.getUserId(session['name'])
-        dbManager.addWebhook(name,avatar,url,owner)
+        dbManager.addWebhook(name,avatar,url,service,owner)
         return redirect('/profile/')
     return render_template('submitWebh.html', logged = True, name = session['name'], title = "New Webhook", webh = None)
 @app.route('/webhook/edit/<webhId>', methods=['POST', 'GET'])
@@ -130,7 +130,8 @@ def webh_edit(webhId = None):
         name = request.form['name']
         avatar = request.form['avatar']
         url = request.form['url']
-        dbManager.editWebhook(int(webhId),name,avatar,url)
+        service= request.form['service']
+        dbManager.editWebhook(webhId,name,avatar,url,service)
         return redirect('/profile/')
     else:
         if webhId == None:

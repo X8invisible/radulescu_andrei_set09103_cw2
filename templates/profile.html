@@ -47,7 +47,7 @@
                                   <tbody>
                                     {% for webh in webhooks %}
                                       <tr>
-                                        <td><a href="#">{{webh[0]}}</a></td>
+                                        <td><a href="/webhook/{{webh[4]}}">{{webh[0]}}</a></td>
                                         <td>{{webh[1]}}</td>
                                         <td>
                                           <form method="post" name="form">

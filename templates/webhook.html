@@ -23,6 +23,7 @@
 <script src="https://code.jquery.com/jquery-2.1.1.min.js" type=
    "text/javascript">
 </script>
+{% if webh[1] == "Discord" %}
 <script>
   $(function() {
       $('button').click(function(e) {
@@ -30,12 +31,28 @@
       var content = $("#content").val();
       var username = "{{webh[0]}}";
       var avatar_url = "{{webh[2]}}";
-      $.post(url,
-  {"content": content, "username": username, "avatar_url": avatar_url},
-      function(){
-          $('#alertS').show();
-      });
+      $.post(url,{"content": content, "username": username, "avatar_url": avatar_url},
+        function(){
+            $('#alertS').show();
+          });
       });
   });
   </script>
+  {% endif %}
+  {% if webh[1] == "Slack" %}
+  <script type="text/javascript">
+     $(function() {
+       $('button').click(function(e) {
+         var url = "{{webh[3]}}";
+         var content = $("#content").val();
+         var username = "{{webh[0]}}";
+         var jsonSendingData={"text": content, "username": username};
+         $.post(url, JSON.stringify(jsonSendingData),
+           function(){
+             $('#alertS').show();
+           });
+       });
+     });
+   </script>
+   {% endif %}
 {% endblock %}

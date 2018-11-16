@@ -51,14 +51,14 @@ def checkPassword(input, hashedPw):
 def editPassword(username, newPassword):
     conn = sql.connect(dbLocation)
     cur = conn.cursor()
-    cur.execute("UPDATE users SET password = ? WHERE id = ?",(newPassword,int(getUserId(username))))
+    cur.execute("UPDATE users SET password = ? WHERE username = ?",(newPassword,username))
     conn.commit()
     conn.close()
 
-def addWebhook(name,avatar,url,owner):
+def addWebhook(name,avatar,url,service, owner):
     conn = sql.connect(dbLocation)
     cur = conn.cursor()
-    cur.execute("INSERT INTO webhook (name,avatar,url,owner) VALUES (?,?,?,?)", (name,avatar,url,owner))
+    cur.execute("INSERT INTO webhook (name,avatar,url,service,owner) VALUES (?,?,?,?,?)", (name,avatar,url,service,owner))
     conn.commit()
     conn.close()
 def getWebhookList(userid):
@@ -81,9 +81,9 @@ def deleteWebhook(id):
     cur.execute("DELETE FROM webhook WHERE id = ?",(id,))
     conn.commit()
     conn.close()
-def editWebhook(id,name,avatar,url):
+def editWebhook(id,name,avatar,url,service):
     conn = sql.connect(dbLocation)
     cur = conn.cursor()
-    cur.execute("UPDATE webhook SET name = ?, avatar = ?, url = ? WHERE id = ?",(name,avatar,url,id))
+    cur.execute("UPDATE webhook SET name = ?, avatar = ?, url = ?, service = ? WHERE id = ?",(name,avatar,url,service,id))
     conn.commit()
     conn.close()
