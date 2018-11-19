@@ -18,8 +18,8 @@
 	<div class="row">
 		<div class="col-md-3" style="margin-bottom:1em;">
 		     <div class="list-group ">
-              <a href="/profile/" class="list-group-item list-group-item-action {% if title =='Dashboard'%}active{% endif %}">Dashboard</a>
-              <a href="/profile/edit" class="list-group-item list-group-item-action {% if title =='User Management'%}active{% endif %}">User Management</a>
+              <a href="/profile/" class="list-group-item list-group-item-action {% if title =='Dashboard'%}red{% endif %}">Dashboard</a>
+              <a href="/profile/edit" class="list-group-item list-group-item-action {% if title =='User Management'%}red{% endif %}">User Management</a>
           </div>
 		</div>
     {% if title =='Dashboard'%}
@@ -31,7 +31,7 @@
   		                    <h4>Webhooks</h4>
   		                </div>
   		                <div class="col-md-5">
-  		                    <a href="/webhook/add" class="btn btn-sm btn-primary">Add Webhook</a>
+  		                    <a href="/webhook/add" class="btn btn-sm red">Add Webhook</a>
   		                </div>
   		            </div>
   		            <div class="row">
@@ -39,6 +39,7 @@
   		                    <table class="table table-hover ">
                                   <thead class="bg-light ">
                                     <tr>
+                                      <th>Avatar</th>
                                       <th>Name</th>
                                       <th>Service</th>
                                       <th>Edit</th>
@@ -47,6 +48,7 @@
                                   <tbody>
                                     {% for webh in webhooks %}
                                       <tr>
+                                        <td><img src="{{webh[2]}}" class="img-fluid rounded-circle" alt="Responsive image" style="height: 2.5em; width: 2.5em;"></td>
                                         <td><a href="/webhook/{{webh[4]}}">{{webh[0]}}</a></td>
                                         <td>{{webh[1]}}</td>
                                         <td>

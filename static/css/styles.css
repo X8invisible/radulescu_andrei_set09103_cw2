@@ -1,0 +1,29 @@
+.square {
+  height: 50px;
+  width: 50px;
+}
+.blue{
+  background-color: #247BA0;
+  color: white;
+  //lapis lazuli
+}
+.plum{
+  background-color: #A379C9;
+  color: white;
+  //rich lavender
+}
+.green{
+  background-color: #1D7874;
+  color: white;
+  //mytrle green
+}
+.red{
+  background-color: #FB3640;
+  color: white;
+  //Deep Coral Red
+}
+.yellow{
+  background-color: #FFCA3A;
+  color: white;
+  //sunglow
+}
