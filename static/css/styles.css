@@ -1,29 +1,47 @@
+html, body {
+    height: 100%;
+}
 .square {
   height: 50px;
   width: 50px;
 }
-.blue{
+.blue, .blue a:active{
   background-color: #247BA0;
   color: white;
   //lapis lazuli
 }
-.plum{
+.blue a:hover{
+  color: #304D6D;
+}
+.plum, .plum a:active{
   background-color: #A379C9;
   color: white;
   //rich lavender
 }
-.green{
+.plum a:hover{
+  color: #6C3A5C;
+}
+.green, .green a:active{
   background-color: #1D7874;
   color: white;
   //mytrle green
 }
-.red{
+.green a:hover{
+  color: #1B3022;
+}
+.red, .red a:active{
   background-color: #FB3640;
   color: white;
   //Deep Coral Red
 }
-.yellow{
+.red a:hover{
+  color: #A23E48;
+}
+.yellow, .yellow a:active{
   background-color: #FFCA3A;
   color: white;
   //sunglow
+}
+.yellow a:hover{
+  color: #EE964B;
 }

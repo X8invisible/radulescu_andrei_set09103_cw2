@@ -18,8 +18,8 @@
 	<div class="row">
 		<div class="col-md-3" style="margin-bottom:1em;">
 		     <div class="list-group ">
-              <a href="/profile/" class="list-group-item list-group-item-action {% if title =='Dashboard'%}red{% endif %}">Dashboard</a>
-              <a href="/profile/edit" class="list-group-item list-group-item-action {% if title =='User Management'%}red{% endif %}">User Management</a>
+              <a href="/profile/" class="list-group-item {% if title =='Dashboard'%}{{color}} text-white{% else %}text-dark{% endif %}">Dashboard</a>
+              <a href="/profile/edit" class="list-group-item {% if title =='User Management'%}{{color}} text-white{% else %}text-dark{% endif %}">User Management</a>
           </div>
 		</div>
     {% if title =='Dashboard'%}
@@ -31,7 +31,7 @@
   		                    <h4>Webhooks</h4>
   		                </div>
   		                <div class="col-md-5">
-  		                    <a href="/webhook/add" class="btn btn-sm red">Add Webhook</a>
+  		                    <a href="/webhook/add" class="btn btn-sm {{color}} text-white">Add Webhook</a>
   		                </div>
   		            </div>
   		            <div class="row">
@@ -49,12 +49,12 @@
                                     {% for webh in webhooks %}
                                       <tr>
                                         <td><img src="{{webh[2]}}" class="img-fluid rounded-circle" alt="Responsive image" style="height: 2.5em; width: 2.5em;"></td>
-                                        <td><a href="/webhook/{{webh[4]}}">{{webh[0]}}</a></td>
+                                        <td><a href="/webhook/{{webh[4]}}" class="text-secondary">{{webh[0]}}</a></td>
                                         <td>{{webh[1]}}</td>
                                         <td>
                                           <form method="post" name="form">
-                                            <a href="/webhook/edit/{{webh[4]}}" class="btn btn-link btn-sm" name="edit"><i class="far fa-edit"></i></a>
-                                            <button class="btn btn-link btn-sm" name ="delete" value= "{{webh[4]}}"><i class="far fa-trash-alt"></i></button>
+                                            <a href="/webhook/edit/{{webh[4]}}" class="btn btn-link btn-sm text-secondary" name="edit"><i class="far fa-edit"></i></a>
+                                            <button class="btn btn-link btn-sm text-secondary" name ="delete" value= "{{webh[4]}}"><i class="far fa-trash-alt"></i></button>
                                           </form>
                                         </td>
                                       </tr>
@@ -75,6 +75,16 @@
           <h5 class="card-title text-center">Change your password</h5>
           <form action"" method="post" name="form" id="submitForm" class="needs-validation" novalidate>
             <div class="form-group">
+              <label>Webhook Service</label>
+              <select class="form-control" name="scheme">
+                <option value="red" {% if color =="red" %} selected="selected"{% endif %}>Deep Coral Red</option>
+                <option value="blue" {% if color =="blue" %} selected="selected"{% endif %}>Lapis Lazuli</option>
+                <option value="plum" {% if color =="plum" %} selected="selected"{% endif %}>Rich Lavender</option>
+                <option value="green" {% if color =="green" %} selected="selected"{% endif %}>Myrtle Green</option>
+                <option value="yellow" {% if color =="yellow" %} selected="selected"{% endif %}>Sunglow</option>
+              </select>
+            </div>
+            <div class="form-group">
               <label>New Password</label>
               <input type="password" class="form-control"name="passwordNew" placeholder="New Password">
             </div>
@@ -82,7 +92,7 @@
               <label>Retype Old Password</label>
               <input type="password" class="form-control" name="passwordOld" placeholder="Old Password">
             </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="submit" class="btn {{color}} text-white">Submit</button>
           </form>
         </div>
       <div>

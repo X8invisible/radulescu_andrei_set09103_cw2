@@ -6,14 +6,14 @@ dbLocation = "var/data.db"
 def signUp(username,password):
     conn = sql.connect(dbLocation)
     cur = conn.cursor()
-    cur.execute("INSERT INTO users (username,password) VALUES (?,?)", (username,password))
+    cur.execute("INSERT INTO users (username,password,scheme) VALUES (?,?,?)", (username,password,"red"))
     conn.commit()
     conn.close()
 
 def retrieveUsers():
 	conn = sql.connect(dbLocation)
 	cur = conn.cursor()
-	cur.execute("SELECT username, password FROM users")
+	cur.execute("SELECT username, password, scheme FROM users")
 	users = cur.fetchall()
 	conn.close()
 	return users
@@ -54,7 +54,12 @@ def editPassword(username, newPassword):
     cur.execute("UPDATE users SET password = ? WHERE username = ?",(newPassword,username))
     conn.commit()
     conn.close()
-
+def editColor(username,color):
+    conn = sql.connect(dbLocation)
+    cur = conn.cursor()
+    cur.execute("UPDATE users SET scheme = ? WHERE username = ?",(color,username))
+    conn.commit()
+    conn.close()
 def addWebhook(name,avatar,url,service, owner):
     conn = sql.connect(dbLocation)
     cur = conn.cursor()
@@ -87,3 +92,10 @@ def editWebhook(id,name,avatar,url,service):
     cur.execute("UPDATE webhook SET name = ?, avatar = ?, url = ?, service = ? WHERE id = ?",(name,avatar,url,service,id))
     conn.commit()
     conn.close()
+def getColor(userid):
+    conn = sql.connect(dbLocation)
+    cur = conn.cursor()
+    cur.execute("SELECT scheme FROM users WHERE id = ?",(int(userid),))
+    scheme = cur.fetchall()
+    conn.close()
+    return scheme

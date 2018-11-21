@@ -5,7 +5,7 @@ import sqlite3
 import configparser
 import dataManager as dbManager
 app = Flask(__name__)
-
+colorScheme="red"
 def init(app):
     config = configparser.ConfigParser()
     try:
@@ -35,28 +35,35 @@ def root():
         if(session['name']):
             logged = True
             name = session['name']
+            colorScheme = dbManager.getColor(dbManager.getUserId(name))[0][0]
     except KeyError:
             logged = False
             name = "Account"
+            colorScheme = "red"
             pass
-    return render_template('index.html', logged = logged, name = name, title = "Home")
+    return render_template('index.html', logged = logged, name = name, title = "Home", color = colorScheme)
 @app.route('/webhook/<webhId>')
 @requires_login
 def sendWebh(webhId = None):
+    colorScheme = dbManager.getColor(dbManager.getUserId(session['name']))[0][0]
     webhooks = dbManager.getWebhookList(int(dbManager.getUserId(session['name'])))
     for webh in webhooks:
         if int(webh[4]) == int(webhId):
-            return render_template('webhook.html', logged = True, name = session['name'], title = webh[0], webh = webh)
+            return render_template('webhook.html', logged = True, name = session['name'], title = webh[0], webh = webh, color = colorScheme)
     abort(403)
 @app.route('/signup', methods=['POST', 'GET'])
 def register():
     if request.method=='POST':
         username = request.form['username']
         password = bcrypt.hashpw(request.form['password'].encode('utf-8'), bcrypt.gensalt())
-        dbManager.signUp(username, password)
-        return redirect('/')
+        if(dbManager.checkUserExists(username)):
+            flash('Username already exists!')
+            return redirect('/signup')
+        else:
+            dbManager.signUp(username, password)
+            return redirect('/')
     else:
-        return render_template('signup.html', logged = False, name = "Account", title = "Sign Up")
+        return render_template('signup.html', logged = False, name = "Account", title = "Sign Up", color = colorScheme)
 @app.route('/login', methods=['POST', 'GET'])
 def log():
     if request.method=='POST':
@@ -73,16 +80,19 @@ def log():
             if(session['name']):
                 logged = True
                 name = session['name']
+                colorScheme = dbManager.getColor(dbManager.getUserId(session['name']))[0][0]
                 flash('You are already Logged In! ')
         except KeyError:
                 logged = False
                 name = "Account"
+                colorScheme = "red"
                 pass
-        return render_template('signup.html', logged = logged, name = name, title = "Log In")
+        return render_template('signup.html', logged = logged, name = name, title = "Log In", color = colorScheme)
 @app.route('/profile/', methods=['POST', 'GET'])
 @app.route('/profile/<name>/', methods=['POST', 'GET'])
 @requires_login
 def dashboard(name = None):
+    colorScheme = dbManager.getColor(dbManager.getUserId(session['name']))[0][0]
     if request.method=='POST':
         id = request.form.get('delete')
         dbManager.deleteWebhook(id)
@@ -91,29 +101,38 @@ def dashboard(name = None):
         if name == None:
             name = session['name']
             userWebh = dbManager.getWebhookList(dbManager.getUserId(name))
-            return render_template('profile.html', logged = True, name = name, title = "Dashboard", webhooks = userWebh)
+            return render_template('profile.html', logged = True, name = name, title = "Dashboard", webhooks = userWebh, color = colorScheme)
         else:
             if dbManager.checkUserExists(name) and name == session['name']:
                 userWebh = dbManager.getWebhookList(dbManager.getUserId(name))
-                return render_template('profile.html', logged = True, name = name, title = "Dashboard", webhooks = userWebh)
+                return render_template('profile.html', logged = True, name = name, title = "Dashboard", webhooks = userWebh, color = colorScheme)
             else:
                 abort(403)
 @app.route('/profile/edit', methods=['POST', 'GET'])
 @requires_login
 def edit_user():
+    colorScheme = dbManager.getColor(dbManager.getUserId(session['name']))[0][0]
     if request.method=='POST':
-        passwordNew = request.form['passwordNew']
-        passwordOld = request.form['passwordOld']
-        if not dbManager.checkLogIn(session['name'], passwordOld):
-            flash('Wrong old password!', 'alert-warning')
+        cScheme= request.form['scheme']
+        passwordNew = request.form.get('passwordNew')
+        passwordOld = request.form.get('passwordOld')
+        if(passwordNew == ''):
+            dbManager.editColor(session['name'], cScheme)
+            colorScheme = cScheme
         else:
-            password = bcrypt.hashpw(passwordNew.encode('utf-8'), bcrypt.gensalt())
-            dbManager.editPassword(session['name'], password)
-            flash('Password Saved!', 'alert-success')
-    return render_template('profile.html', logged = True, name = session['name'], title = "User Management")
+            if not dbManager.checkLogIn(session['name'], passwordOld):
+                flash('Wrong old password!', 'alert-warning')
+            else:
+                password = bcrypt.hashpw(passwordNew.encode('utf-8'), bcrypt.gensalt())
+                dbManager.editPassword(session['name'], password)
+                dbManager.editColor(session['name'], cScheme)
+                colorScheme = cScheme
+                flash('Password Saved!', 'alert-success')
+    return render_template('profile.html', logged = True, name = session['name'], title = "User Management", color = colorScheme)
 @app.route('/webhook/add', methods=['POST', 'GET'])
 @requires_login
 def webh_add():
+    colorScheme = dbManager.getColor(dbManager.getUserId(session['name']))[0][0]
     if request.method=='POST':
         name = request.form['name']
         avatar = request.form['avatar']
@@ -122,10 +141,11 @@ def webh_add():
         owner = dbManager.getUserId(session['name'])
         dbManager.addWebhook(name,avatar,url,service,owner)
         return redirect('/profile/')
-    return render_template('submitWebh.html', logged = True, name = session['name'], title = "New Webhook", webh = None)
+    return render_template('submitWebh.html', logged = True, name = session['name'], title = "New Webhook", webh = None, color = colorScheme)
 @app.route('/webhook/edit/<webhId>', methods=['POST', 'GET'])
 @requires_login
 def webh_edit(webhId = None):
+    colorScheme = dbManager.getColor(dbManager.getUserId(session['name']))[0][0]
     if request.method == 'POST':
         name = request.form['name']
         avatar = request.form['avatar']
@@ -144,10 +164,11 @@ def webh_edit(webhId = None):
                 if webh[0][5] != dbManager.getUserId(session['name']):
                     abort(403)
                 else:
-                    return render_template('submitWebh.html', logged = True, name = session['name'], title = "Edit Webhook", webh = webh)
+                    return render_template('submitWebh.html', logged = True, name = session['name'], title = "Edit Webhook", webh = webh, color = colorScheme)
 @app.route('/logout')
 def logout():
     session.pop('name', None)
+    colorScheme = "red"
     return redirect('/')
 
 app.secret_key = app.config['SECRET_KEY']
